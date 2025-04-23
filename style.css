@@ -1,0 +1,36 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    margin: 0;
+  }
+  
+  .loader-container {
+    text-align: center;
+  }
+  
+  .progress-bar {
+    width: 300px;
+    height: 25px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 30px;
+    overflow: hidden;
+    margin-top: 20px;
+  }
+  
+  .bar-fill {
+    width: 0%;
+    height: 100%;
+    background-color: #fff;
+    animation: fillProgress 10s linear forwards;
+  }
+  
+  @keyframes fillProgress {
+    0% { width: 0; }
+    100% { width: 100%; }
+  }
+  

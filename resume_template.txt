@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{name}} - Resume</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>{{name}}</h1>
+    <p><strong>Email:</strong> {{email}} | <strong>Phone:</strong> {{phone}}</p>
+    <p><strong>LinkedIn:</strong> {{linkedin}} | <strong>GitHub:</strong> {{github}}</p>
+
+    <div class="section">
+      <h2>Career Objective</h2>
+      <p>{{objective}}</p>
+    </div>
+
+    <div class="section">
+      <h2>Education</h2>
+      <ul>
+        {{education}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Technical Skills</h2>
+      <ul>
+        {{skills}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Projects</h2>
+      <ul>
+        {{projects}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Internships</h2>
+      <ul>
+        {{internships}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Certifications</h2>
+      <ul>
+        {{certifications}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Awards & Achievements</h2>
+      <ul>
+        {{awards}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Languages Known</h2>
+      <ul>
+        {{languages}}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Hobbies & Interests</h2>
+      <ul>
+        {{hobbies}}
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
