@@ -1,41 +1,49 @@
-const tickUpload = document.getElementById("tick-upload");
-const tickAPI = document.getElementById("tick-api");
-const tickResume = document.getElementById("tick-resume");
-const tickDownload = document.getElementById("tick-download");
-const resumeOutput = document.getElementById("resumeOutput");
+function getResumeDataFromQuery() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("resume")) {
+    try {
+      const decoded = decodeURIComponent(params.get("resume"));
+      const resumeObj = JSON.parse(decoded);
 
-function updateTick(el, success = true) {
-  el.textContent = success ? "✅" : "❌";
-  el.className = success ? "done" : "error";
-}
+      return `
+Name: ${resumeObj.name}
 
-// Periodically check backend
-async function pollStatus() {
-  try {
-    const res = await fetch("https://airesumate-web-github-io.onrender.com/status");
-    const data = await res.json();
+Career Objective:
+${resumeObj.careerObjective}
 
-    const steps = data.steps || [];
+Education:
+${resumeObj.education}
 
-    // Set ticks based on completed steps
-    if (steps.includes("uploaded")) updateTick(tickUpload);
-    if (steps.includes("gpt-called")) updateTick(tickAPI);
-    if (steps.includes("resume-generated")) {
-      updateTick(tickResume);
-      if (data.resume) resumeOutput.textContent = data.resume;
+Technical Skills:
+${resumeObj.technicalSkills}
+
+Projects:
+${resumeObj.projects}
+
+Internships:
+${resumeObj.internships}
+
+Work Experience:
+${resumeObj.workExperience}
+
+Certifications:
+${resumeObj.certifications}
+
+Awards & Achievements:
+${resumeObj.awards}
+
+Languages Known:
+${resumeObj.languages}
+
+Hobbies & Interests:
+${resumeObj.hobbies}
+
+Photo & Signature:
+${resumeObj.photoSignature}
+`;
+    } catch (e) {
+      console.error("Invalid resume data in URL", e);
     }
-
-    if (steps.includes("downloaded")) {
-      updateTick(tickDownload);
-    }
-
-    // Stop polling if complete
-    if (steps.includes("done")) clearInterval(polling);
-  } catch (e) {
-    console.error("Error fetching status:", e);
-    resumeOutput.textContent = "⚠️ Server error or connection issue.";
   }
+  return null;
 }
-
-// Start polling every 3 seconds
-const polling = setInterval(pollStatus, 3000);
