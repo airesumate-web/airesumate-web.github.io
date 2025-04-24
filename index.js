@@ -1,24 +1,55 @@
 // index.js
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+require("dotenv").config();
+
 const app = express();
+const port = process.env.PORT || 3000;
 
-require('dotenv').config();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
-  res.send("🎉 AI Resumate Backend is Live!");
+app.get("/status", (req, res) => {
+  res.json({ message: "Server is live", steps: ["status"] });
 });
 
-// POST endpoint to handle resume generation (optional)
-app.post("/generate-resume", async (req, res) => {
-  const { prompt } = req.body;
-  // Call OpenAI API here
-  res.json({ message: "Resume generation logic goes here." });
+app.post("/generate", async (req, res) => {
+  try {
+    const userData = req.body;
+    console.log("Received user data:", userData);
+
+    const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are a resume builder generating ATS-friendly resumes.",
+          },
+          {
+            role: "user",
+            content: `Generate a resume based on this info: ${JSON.stringify(userData)}`,
+          },
+        ],
+      }),
+    });
+
+    const json = await openaiResponse.json();
+    const generatedResume = json.choices?.[0]?.message?.content || "No response";
+
+    res.json({ resume: generatedResume, status: "success" });
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).json({ error: "Failed to generate resume." });
+  }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
