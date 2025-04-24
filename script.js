@@ -47,3 +47,15 @@ ${resumeObj.photoSignature}
   }
   return null;
 }
+
+// ✅ ADD this below:
+window.onload = function () {
+  const formattedResume = getResumeDataFromQuery();
+  const outputElement = document.getElementById("resumeOutput");
+
+  if (formattedResume) {
+    outputElement.textContent = formattedResume;
+  } else {
+    outputElement.textContent = "No valid resume data found.";
+  }
+};
