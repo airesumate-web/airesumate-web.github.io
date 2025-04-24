@@ -1,44 +1,51 @@
-const API_URL = "https://airesumate-web-github-io.onrender.com/status";
+const form = document.getElementById("resumeForm");
+const resumeOutput = document.getElementById("resumeOutput");
 
-function updateStatus(id, message, statusClass) {
-  const step = document.getElementById(id);
-  step.innerText = message;
-  step.className = statusClass;
+const tickUpload = document.getElementById("tick-upload");
+const tickAPI = document.getElementById("tick-api");
+const tickResume = document.getElementById("tick-resume");
+
+function updateTick(tickElement, success = true) {
+  tickElement.textContent = success ? "✅" : "❌";
+  tickElement.className = success ? "done" : "error";
 }
 
-async function fetchStatus() {
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+  const userData = {};
+  formData.forEach((value, key) => (userData[key] = value));
+
+  // Step 1: Mark uploaded
+  updateTick(tickUpload);
+
   try {
-    const res = await fetch(API_URL);
+    // Step 2: GPT API call
+    updateTick(tickAPI, false); // while pending
+
+    const res = await fetch("https://airesumate-web-github-io.onrender.com/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    });
+
     const data = await res.json();
 
-    updateStatus('step1', data.userDataUploaded ? '✔️ User data uploaded' : '❌ User data missing', data.userDataUploaded ? 'success' : 'fail');
-    updateStatus('step2', data.gptApiIntegrated ? '✔️ GPT API integrated' : '❌ GPT API not integrated', data.gptApiIntegrated ? 'success' : 'fail');
-
-    if (data.generationProgress < 100) {
-      updateStatus('step3', `⏳ Resume generation: ${data.generationProgress}%`, 'pending');
+    if (data.resume) {
+      updateTick(tickAPI, true);
+      updateTick(tickResume, true);
+      resumeOutput.textContent = data.resume;
     } else {
-      updateStatus('step3', '✔️ Resume generation complete', 'success');
+      updateTick(tickResume, false);
+      resumeOutput.textContent = "Error generating resume.";
     }
-
-    updateStatus('step4', data.resumeGenerated ? '✔️ Resume generated' : '❌ Resume not generated', data.resumeGenerated ? 'success' : 'fail');
-    updateStatus('step5', data.resumeDownloaded ? '✔️ Resume downloaded' : '❌ Resume not downloaded', data.resumeDownloaded ? 'success' : 'fail');
-
-  } catch (error) {
-    updateStatus('step1', '❌ Failed to connect to API', 'fail');
-    updateStatus('step2', '❌ Failed to connect to API', 'fail');
-    updateStatus('step3', '❌ Failed to connect to API', 'fail');
-    updateStatus('step4', '❌ Failed to connect to API', 'fail');
-    updateStatus('step5', '❌ Failed to connect to API', 'fail');
-    console.error("API error:", error);
+  } catch (err) {
+    console.error(err);
+    updateTick(tickAPI, false);
+    updateTick(tickResume, false);
+    resumeOutput.textContent = "Error contacting server.";
   }
-}
-
-function goHome() {
-  window.location.href = "index.html"; // Or change if you have a different home page
-}
-
-// Auto-refresh every 3 seconds
-window.onload = () => {
-  fetchStatus();
-  setInterval(fetchStatus, 3000);
-};
+});
