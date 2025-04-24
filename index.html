@@ -2,24 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Resumate Status Checker</title>
+  <title>AI Resumate</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>📝 AI Resumate Web Activity Status</h1>
+  <h2>Resume Builder</h2>
 
-    <ul class="steps">
-      <li id="step1">Checking user data upload...</li>
-      <li id="step2">Checking GPT API integration...</li>
-      <li id="step3">Checking resume generation status...</li>
-      <li id="step4">Checking resume generation result...</li>
-      <li id="step5">Checking resume download status...</li>
-    </ul>
+  <form id="resumeForm">
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="text" name="skills" placeholder="Skills (comma-separated)" required />
+    <textarea name="experience" placeholder="Experience"></textarea>
+    <button type="submit">Generate Resume</button>
+  </form>
 
-    <button onclick="goHome()">🔁 Back to Home</button>
+  <div id="status">
+    <p><span id="tick-upload" class="pending">🔄</span> Data Uploaded</p>
+    <p><span id="tick-api" class="pending">🔄</span> GPT API Called</p>
+    <p><span id="tick-resume" class="pending">🔄</span> Resume Generated</p>
   </div>
+
+  <pre id="resumeOutput"></pre>
 
   <script src="script.js"></script>
 </body>
