@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>AI Resumate</title>
+  <meta charset="UTF-8">
+  <title>AI Resumate Progress Tracker</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Resume Builder</h2>
-
-  <form id="resumeForm">
-    <input type="text" name="name" placeholder="Your Name" required />
-    <input type="text" name="skills" placeholder="Skills (comma-separated)" required />
-    <textarea name="experience" placeholder="Experience"></textarea>
-    <button type="submit">Generate Resume</button>
-  </form>
+  <h1>AI Resumate Status Monitor</h1>
 
   <div id="status">
-    <p><span id="tick-upload" class="pending">🔄</span> Data Uploaded</p>
-    <p><span id="tick-api" class="pending">🔄</span> GPT API Called</p>
+    <p><span id="tick-upload" class="pending">🔄</span> User Data Uploaded</p>
+    <p><span id="tick-api" class="pending">🔄</span> GPT API Processing</p>
     <p><span id="tick-resume" class="pending">🔄</span> Resume Generated</p>
+    <p><span id="tick-download" class="pending">🔄</span> Resume Downloaded</p>
   </div>
 
-  <pre id="resumeOutput"></pre>
+  <h2>Generated Resume</h2>
+  <pre id="resumeOutput">Waiting for data...</pre>
+
+  <button onclick="window.location.reload()">Back to Home</button>
 
   <script src="script.js"></script>
 </body>
