@@ -1,51 +1,41 @@
-const form = document.getElementById("resumeForm");
-const resumeOutput = document.getElementById("resumeOutput");
-
 const tickUpload = document.getElementById("tick-upload");
 const tickAPI = document.getElementById("tick-api");
 const tickResume = document.getElementById("tick-resume");
+const tickDownload = document.getElementById("tick-download");
+const resumeOutput = document.getElementById("resumeOutput");
 
-function updateTick(tickElement, success = true) {
-  tickElement.textContent = success ? "✅" : "❌";
-  tickElement.className = success ? "done" : "error";
+function updateTick(el, success = true) {
+  el.textContent = success ? "✅" : "❌";
+  el.className = success ? "done" : "error";
 }
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const formData = new FormData(form);
-  const userData = {};
-  formData.forEach((value, key) => (userData[key] = value));
-
-  // Step 1: Mark uploaded
-  updateTick(tickUpload);
-
+// Periodically check backend
+async function pollStatus() {
   try {
-    // Step 2: GPT API call
-    updateTick(tickAPI, false); // while pending
-
-    const res = await fetch("https://airesumate-web-github-io.onrender.com/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(userData),
-    });
-
+    const res = await fetch("https://airesumate-web-github-io.onrender.com/status");
     const data = await res.json();
 
-    if (data.resume) {
-      updateTick(tickAPI, true);
-      updateTick(tickResume, true);
-      resumeOutput.textContent = data.resume;
-    } else {
-      updateTick(tickResume, false);
-      resumeOutput.textContent = "Error generating resume.";
+    const steps = data.steps || [];
+
+    // Set ticks based on completed steps
+    if (steps.includes("uploaded")) updateTick(tickUpload);
+    if (steps.includes("gpt-called")) updateTick(tickAPI);
+    if (steps.includes("resume-generated")) {
+      updateTick(tickResume);
+      if (data.resume) resumeOutput.textContent = data.resume;
     }
-  } catch (err) {
-    console.error(err);
-    updateTick(tickAPI, false);
-    updateTick(tickResume, false);
-    resumeOutput.textContent = "Error contacting server.";
+
+    if (steps.includes("downloaded")) {
+      updateTick(tickDownload);
+    }
+
+    // Stop polling if complete
+    if (steps.includes("done")) clearInterval(polling);
+  } catch (e) {
+    console.error("Error fetching status:", e);
+    resumeOutput.textContent = "⚠️ Server error or connection issue.";
   }
-});
+}
+
+// Start polling every 3 seconds
+const polling = setInterval(pollStatus, 3000);
