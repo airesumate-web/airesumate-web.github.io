@@ -1,19 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Generating Resume...</title>
-  <link rel="stylesheet" href="./style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Resumate Status Checker</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="loader-container">
-    <h2>Generating your resume using AI...</h2>
-    <div class="progress-bar"><div class="bar-fill"></div></div>
+  <div class="container">
+    <h1>📝 AI Resumate Web Activity Status</h1>
+
+    <ul class="steps">
+      <li id="step1">Checking user data upload...</li>
+      <li id="step2">Checking GPT API integration...</li>
+      <li id="step3">Checking resume generation status...</li>
+      <li id="step4">Checking resume generation result...</li>
+      <li id="step5">Checking resume download status...</li>
+    </ul>
+
+    <button onclick="goHome()">🔁 Back to Home</button>
   </div>
-  <div id="resume-container" style="display: none;">
-    <h2>Your AI-Generated Resume</h2>
-    <div id="resume-content"></div>
-  </div>
-  <script src="./script.js"></script>
+
+  <script src="script.js"></script>
 </body>
 </html>
