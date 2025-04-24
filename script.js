@@ -1,39 +1,44 @@
-window.onload = async () => {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const jsonData = decodeURIComponent(urlParams.get('data'));
+const API_URL = "https://airesumate-web-github-io.onrender.com/status";
 
-    const parsedData = JSON.parse(jsonData);
+function updateStatus(id, message, statusClass) {
+  const step = document.getElementById(id);
+  step.innerText = message;
+  step.className = statusClass;
+}
 
-    try {
-        const response = await fetch("https://airesumate-backend.onrender.com/api/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                prompt: `Generate a professional ATS-friendly resume for the following data:\n${JSON.stringify(parsedData, null, 2)}`
-            })
-        });
+async function fetchStatus() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-        const result = await response.json();
-        const resumeText = result.resume; // Assuming the backend returns the resume in a `resume` field
+    updateStatus('step1', data.userDataUploaded ? '✔️ User data uploaded' : '❌ User data missing', data.userDataUploaded ? 'success' : 'fail');
+    updateStatus('step2', data.gptApiIntegrated ? '✔️ GPT API integrated' : '❌ GPT API not integrated', data.gptApiIntegrated ? 'success' : 'fail');
 
-        // Create downloadable file
-        const blob = new Blob([resumeText], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "ATS-Friendly-Resume.txt";
-        a.click();
-
-        // Redirect back to Flutter app
-        setTimeout(() => {
-            window.location.href = "resumeapp://home"; // Custom URL scheme to navigate back
-        }, 3000);
-    } catch (error) {
-        alert("Something went wrong. Try again.");
-        console.error(error);
+    if (data.generationProgress < 100) {
+      updateStatus('step3', `⏳ Resume generation: ${data.generationProgress}%`, 'pending');
+    } else {
+      updateStatus('step3', '✔️ Resume generation complete', 'success');
     }
+
+    updateStatus('step4', data.resumeGenerated ? '✔️ Resume generated' : '❌ Resume not generated', data.resumeGenerated ? 'success' : 'fail');
+    updateStatus('step5', data.resumeDownloaded ? '✔️ Resume downloaded' : '❌ Resume not downloaded', data.resumeDownloaded ? 'success' : 'fail');
+
+  } catch (error) {
+    updateStatus('step1', '❌ Failed to connect to API', 'fail');
+    updateStatus('step2', '❌ Failed to connect to API', 'fail');
+    updateStatus('step3', '❌ Failed to connect to API', 'fail');
+    updateStatus('step4', '❌ Failed to connect to API', 'fail');
+    updateStatus('step5', '❌ Failed to connect to API', 'fail');
+    console.error("API error:", error);
+  }
+}
+
+function goHome() {
+  window.location.href = "index.html"; // Or change if you have a different home page
+}
+
+// Auto-refresh every 3 seconds
+window.onload = () => {
+  fetchStatus();
+  setInterval(fetchStatus, 3000);
 };
